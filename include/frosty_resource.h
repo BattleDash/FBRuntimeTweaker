@@ -9,27 +9,27 @@
 
 typedef enum
 {
-	FrostyResourceType_Invalid = 0,
-	FrostyResourceType_Embedded,
-	FrostyResourceType_Ebx,
-	FrostyResourceType_Res,
-	FrostyResourceType_Chunk,
-	FrostyResourceType_Bundle
+    FrostyResourceType_Invalid = 0,
+    FrostyResourceType_Embedded,
+    FrostyResourceType_Ebx,
+    FrostyResourceType_Res,
+    FrostyResourceType_Chunk,
+    FrostyResourceType_Bundle
 } RTFrostyResourceTypeE;
 
 typedef struct
 {
-	RTFrostyResourceTypeE type;
-	int32_t resourceIndex;
+    RTFrostyResourceTypeE type;
+    int32_t resourceIndex;
 
-	char* name;
-	char sha1[20];
+    char* name;
+    char sha1[20];
 
-	int64_t size;
-	uint8_t flags;
-	int32_t handleHash;
+    int64_t size;
+    uint8_t flags;
+    int32_t handleHash;
 
-	char* userData;
+    char* userData;
 } RTFrostyResourceT;
 
 EXTERN_C_BLOCK_START

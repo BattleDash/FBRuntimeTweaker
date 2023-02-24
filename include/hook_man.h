@@ -6,9 +6,9 @@
 
 // Create a typedef, instance, and function declaration
 #define RT_DECLARE_HOOK(retType, name, ...) \
-	typedef retType(*RTFunc##name##T)(##__VA_ARGS__##); \
-	RTFunc##name##T fp##name = NULL; \
-	retType _##name##Hook(##__VA_ARGS__##)
+    typedef retType(*RTFunc##name##T)(##__VA_ARGS__##); \
+    RTFunc##name##T fp##name = NULL; \
+    retType _##name##Hook(##__VA_ARGS__##)
 
 typedef struct RTHookManagerT RTHookManagerT;
 

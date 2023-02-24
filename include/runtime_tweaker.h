@@ -11,12 +11,12 @@
 
 typedef struct
 {
-	HMODULE nativeModule;
-	FILE* consoleFile;
+    HMODULE nativeModule;
+    FILE* consoleFile;
 
-	RTHookManagerT* hookMan;
+    RTHookManagerT* hookMan;
 
-	RTArrayT* mods;
+    RTArrayT* mods;
 } RTRuntimeTweakerT;
 
 EXTERN_C_BLOCK_START

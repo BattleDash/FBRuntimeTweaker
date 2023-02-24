@@ -76,22 +76,22 @@ RTErrorT RT_LoadFile(const char* file, char** outBuf, size_t* outSize)
 
 RTErrorT RT_SaveFile(const char* file, const char* buffer, size_t size)
 {
-	FILE* fp = fopen(file, "wb");
-	if (fp == NULL)
-	{
+    FILE* fp = fopen(file, "wb");
+    if (fp == NULL)
+    {
         return RT_ERROR_INVALID_FILE;
-	}
+    }
 
-	fwrite(buffer, size, 1, fp);
-	fclose(fp);
+    fwrite(buffer, size, 1, fp);
+    fclose(fp);
 
     return RT_SUCCESS;
 }
 
 void RT_SafeFree(void* mem)
 {
-	if (mem != NULL)
-	{
-		free(mem);
-	}
+    if (mem != NULL)
+    {
+        free(mem);
+    }
 }

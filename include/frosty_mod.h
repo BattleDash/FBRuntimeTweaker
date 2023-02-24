@@ -10,29 +10,29 @@
 
 typedef struct
 {
-	char* title;
-	char* author;
-	char* category;
-	char* version;
-	char* description;
-	char* link;
+    char* title;
+    char* author;
+    char* category;
+    char* version;
+    char* description;
+    char* link;
 } FrostyModDetailsT;
 
 typedef struct
 {
-	char* data;
+    char* data;
 
-	uint64_t magic;
-	uint32_t version;
+    uint64_t magic;
+    uint32_t version;
 
-	int64_t dataOffset;
-	int32_t dataCount;
-	int32_t gameVersion;
+    int64_t dataOffset;
+    int32_t dataCount;
+    int32_t gameVersion;
 
-	char* profile;
+    char* profile;
 
-	FrostyModDetailsT details;
-	RTArrayT* resources;
+    FrostyModDetailsT details;
+    RTArrayT* resources;
 } RTFrostyModT;
 
 EXTERN_C_BLOCK_START

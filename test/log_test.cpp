@@ -5,5 +5,5 @@
 // Log a test value
 TEST(LogTest, Log)
 {
-	RT_LogF("Test %d", 1);
+    RT_LogF("Test %d", 1);
 }
