@@ -25,6 +25,9 @@ EXTERN_C_BLOCK_START
 // Log something to the console
 void RT_LogF(const char* format, ...);
 
+// Set whether logs are enabled
+void RT_SetLogEnabled(bool enabled);
+
 // Check if a file exists
 bool RT_FileExists(const char* file);
 

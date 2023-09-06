@@ -13,8 +13,15 @@
 #include <unistd.h>
 #endif
 
+static bool s_logEnabled = true;
+
 void RT_LogF(const char* format, ...)
 {
+    if (!s_logEnabled)
+    {
+        return;
+    }
+
     va_list fmtList;
     va_start(fmtList, format);
 
@@ -23,6 +30,11 @@ void RT_LogF(const char* format, ...)
     va_end(fmtList);
 
     printf("[RuntimeTweaker] %s\n", outStr);
+}
+
+void RT_SetLogEnabled(bool enabled)
+{
+    s_logEnabled = enabled;
 }
 
 bool RT_FileExists(const char* file)

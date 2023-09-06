@@ -25,5 +25,5 @@ TEST_F(IntArrayTest, ArrayAppend)
     EXPECT_EQ(RT_ArrayAppend(arr, (void*) 102478), RT_SUCCESS);
 
     EXPECT_EQ(RT_ArrayGetSize(arr), 1);
-    EXPECT_EQ((uint32_t) RT_ArrayGetElement(arr, 0), 102478);
+    EXPECT_EQ((uintptr_t) RT_ArrayGetElement(arr, 0), 102478);
 }

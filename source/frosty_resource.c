@@ -32,8 +32,8 @@ RTErrorT RT_FrostyParseResource(const char** buf, RTFrostyResourceT* resource)
     int32_t count = RT_READ_BUF(int32_t, buf);
     for (int32_t i = 0; i < count; ++i)
     {
-        uintptr_t bundleHash = RT_READ_BUF(int32_t, buf);
-        RT_SAFE_RET(RT_ArrayAppend(resource->addedBundles, bundleHash));
+        uintptr_t bundleHash = RT_READ_BUF(uint32_t, buf);
+        RT_SAFE_RET(RT_ArrayAppend(resource->addedBundles, (void*) bundleHash));
     }
 
     // Special handling for res/chunk resources
