@@ -30,6 +30,8 @@ typedef struct
     int32_t handleHash;
 
     char* userData;
+
+    RTArrayT* addedBundles;
 } RTFrostyResourceT;
 
 EXTERN_C_BLOCK_START
