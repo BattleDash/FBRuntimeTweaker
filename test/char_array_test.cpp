@@ -3,7 +3,7 @@
 #include "array.h"
 
 // Fixture for wrapping array creation
-class ArrayTest : public testing::Test
+class CharArrayTest : public testing::Test
 {
 protected:
     void SetUp()
@@ -20,7 +20,7 @@ protected:
 };
 
 // Append a value to the array
-TEST_F(ArrayTest, ArrayAppend)
+TEST_F(CharArrayTest, ArrayAppend)
 {
     char c = 'a';
     EXPECT_EQ(RT_ArrayAppend(arr, &c), RT_SUCCESS);
@@ -30,7 +30,7 @@ TEST_F(ArrayTest, ArrayAppend)
 }
 
 // Append a value to the array
-TEST_F(ArrayTest, ArrayRemove)
+TEST_F(CharArrayTest, ArrayRemove)
 {
     char c = 'a';
     EXPECT_EQ(RT_ArrayAppend(arr, &c), RT_SUCCESS);

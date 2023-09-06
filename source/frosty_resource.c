@@ -27,13 +27,13 @@ RTErrorT RT_FrostyParseResource(const char** buf, RTFrostyResourceT* resource)
         RT_SAFE_RET(RT_ReadTerminatedString(buf, &resource->userData));
     }
 
-    RT_SAFE_RET(RT_ArrayCreate(sizeof(RTFrostyResourceT*), &resource->addedBundles));
+    RT_SAFE_RET(RT_ArrayCreate(sizeof(uintptr_t), &resource->addedBundles));
 
     int32_t count = RT_READ_BUF(int32_t, buf);
     for (int32_t i = 0; i < count; ++i)
     {
-        int32_t bundleHash = RT_READ_BUF(int32_t, buf);
-        RT_SAFE_RET(RT_ArrayAppend(resource->addedBundles, resource));
+        uintptr_t bundleHash = RT_READ_BUF(int32_t, buf);
+        RT_SAFE_RET(RT_ArrayAppend(resource->addedBundles, bundleHash));
     }
 
     // Special handling for res/chunk resources

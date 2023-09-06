@@ -49,7 +49,8 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 set(TEST_SOURCE_FILES
-	test/array_test.cpp
+	test/char_array_test.cpp
+	test/int_array_test.cpp
 	test/frosty_test.cpp
 	test/log_test.cpp
 )
