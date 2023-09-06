@@ -130,6 +130,12 @@ RTErrorT RT_FrostyDecompressEbx(const char* buf, size_t size, char** outBuf, siz
         int32_t bufferSize = RT_READ_BUF(int32_t, &buf);
         bufferSize = _SwapEndiannessS32(bufferSize);
 
+        // There are some weird huge resources that fail to decompress
+        if (bufferSize >= 1e+9)
+        {
+            return RT_ERROR_RESOURCE_TOO_BIG;
+        }
+
         uint16_t compressCode = RT_READ_BUF(uint16_t, &buf);
         RT_UNUSED(compressCode);
 
@@ -146,7 +152,12 @@ RTErrorT RT_FrostyDecompressEbx(const char* buf, size_t size, char** outBuf, siz
         writer = newBuf;
 
         // Decompress
-        ZSTD_decompress(writer + total, bufferSize, buf, compressSize);
+        size_t err = ZSTD_decompress(writer + total, bufferSize, buf, compressSize);
+        if (ZSTD_isError(err))
+        {
+            return RT_ERROR_DECOMPRESSION_FAILED;
+        }
+
         buf += compressSize;
 
         size -= (size_t)compressSize + 8;

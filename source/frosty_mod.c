@@ -63,6 +63,9 @@ RTErrorT RT_FrostyLoadMod(const char* buf, size_t size, RTFrostyModT** outMod)
         return RT_ERROR_ALLOCATION_FAILED;
     }
 
+    // Zero-out to avoid panics when freeing after an error
+    memset(mod, 0, sizeof(RTFrostyModT));
+
     // Copy original data for resource loading
     mod->data = malloc(size);
     if (mod->data == NULL)
@@ -168,18 +171,21 @@ void RT_FrostyDestroyMod(RTFrostyModT* mod)
     _DestroyModDetails(mod->details);
 
     // Free resources
-    size_t resourceCount = RT_ArrayGetSize(mod->resources);
-    for (size_t i = 0; i < resourceCount; ++i)
+    if (mod->resources != NULL)
     {
-        RTFrostyResourceT* resource = RT_ArrayGetElement(mod->resources, i);
-        if (resource == NULL)
+        size_t resourceCount = RT_ArrayGetSize(mod->resources);
+        for (size_t i = 0; i < resourceCount; ++i)
         {
-            continue;
-        }
+            RTFrostyResourceT* resource = RT_ArrayGetElement(mod->resources, i);
+            if (resource == NULL)
+            {
+                continue;
+            }
 
-        RT_FrostyDestroyResource(resource);
+            RT_FrostyDestroyResource(resource);
+        }
+        RT_ArrayDestroy(mod->resources);
     }
-    RT_ArrayDestroy(mod->resources);
 
     // Free mod
     RT_SafeFree(mod->data);
