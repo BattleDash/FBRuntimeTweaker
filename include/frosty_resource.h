@@ -32,6 +32,19 @@ typedef struct
     char* userData;
 
     RTArrayT* addedBundles;
+
+    // Res Data
+    uint32_t resType;
+    uint64_t resRid;
+    uint8_t resMeta[0x10];
+
+    // Chunk Data
+    uint32_t rangeStart;
+    uint32_t rangeEnd;
+    uint32_t logicalOffset;
+    uint32_t logicalSize;
+    int32_t h32;
+    int32_t firstMip;
 } RTFrostyResourceT;
 
 EXTERN_C_BLOCK_START

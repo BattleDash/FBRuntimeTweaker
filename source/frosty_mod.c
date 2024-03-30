@@ -8,7 +8,9 @@
 #include <string.h>
 
 const uint64_t kFrostyMagic = 0x01005954534F5246;
-const uint64_t kFrostyVersion = 5;
+
+const uint64_t kFrostyLowestVersion = 4;
+const uint64_t kFrostyHighestVersion = 5;
 
 RTErrorT _ParseModHeader(const char** buf, RTFrostyModT* mod)
 {
@@ -16,7 +18,7 @@ RTErrorT _ParseModHeader(const char** buf, RTFrostyModT* mod)
     mod->magic = RT_READ_BUF(uint64_t, buf);
     mod->version = RT_READ_BUF(uint32_t, buf);
 
-    if (mod->magic != kFrostyMagic || mod->version != kFrostyVersion)
+    if (mod->magic != kFrostyMagic || mod->version < kFrostyLowestVersion || mod->version > kFrostyHighestVersion)
     {
         return RT_ERROR_INVALID_MOD_HEADER;
     }
@@ -123,7 +125,9 @@ RTErrorT RT_FrostyReadModResource(RTFrostyModT* mod, RTFrostyResourceT* resource
     offset = mod->dataOffset + (mod->dataCount * 16) + dataOffset;
 
     // Intercept and decompress if EBX
-    if (resource->type == FrostyResourceType_Ebx)
+    if ((resource->type == FrostyResourceType_Ebx || resource->type == FrostyResourceType_Res ||
+            resource->type == FrostyResourceType_Chunk) &&
+        resource->handleHash == 0)
     {
         return RT_FrostyDecompressEbx(mod->data + offset, dataSize, outBuf, outSize);
     }

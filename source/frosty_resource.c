@@ -33,25 +33,36 @@ RTErrorT RT_FrostyParseResource(const char** buf, RTFrostyResourceT* resource)
     for (int32_t i = 0; i < count; ++i)
     {
         uintptr_t bundleHash = RT_READ_BUF(uint32_t, buf);
-        RT_SAFE_RET(RT_ArrayAppend(resource->addedBundles, (void*) bundleHash));
+        RT_SAFE_RET(RT_ArrayAppend(resource->addedBundles, (void*)bundleHash));
     }
 
-    // Special handling for res/chunk resources
-    if (resource->type == FrostyResourceType_Res)
+    // Special handling for bundle/res/chunk resources
+    if (resource->type == FrostyResourceType_Bundle)
     {
-        RT_UNUSED(RT_READ_BUF(uint32_t, buf));
-        RT_UNUSED(RT_READ_BUF(uint64_t, buf));
+        RT_SAFE_RET(RT_ReadTerminatedString(buf, &resource->name));
+        RT_UNUSED(RT_READ_BUF(int32_t, buf));
+    }
+    else if (resource->type == FrostyResourceType_Res)
+    {
+        resource->resType = RT_READ_BUF(uint32_t, buf);
+        resource->resRid = RT_READ_BUF(uint64_t, buf);
         int32_t metaSize = RT_READ_BUF(int32_t, buf);
+        memcpy(resource->resMeta, *buf, metaSize);
         *buf += metaSize;
     }
     else if (resource->type == FrostyResourceType_Chunk)
     {
-        RT_UNUSED(RT_READ_BUF(uint32_t, buf));
-        RT_UNUSED(RT_READ_BUF(uint32_t, buf));
-        RT_UNUSED(RT_READ_BUF(uint32_t, buf));
-        RT_UNUSED(RT_READ_BUF(uint32_t, buf));
-        RT_UNUSED(RT_READ_BUF(int32_t, buf));
-        RT_UNUSED(RT_READ_BUF(int32_t, buf));
+        resource->rangeStart = RT_READ_BUF(uint32_t, buf);
+        resource->rangeEnd = RT_READ_BUF(uint32_t, buf);
+        resource->logicalOffset = RT_READ_BUF(uint32_t, buf);
+        resource->logicalSize = RT_READ_BUF(uint32_t, buf);
+        resource->h32 = RT_READ_BUF(int32_t, buf);
+        resource->firstMip = RT_READ_BUF(int32_t, buf);
+
+        if (resource->firstMip == -1 && resource->rangeStart != 0)
+        {
+            resource->firstMip = 0;
+        }
     }
 
     return RT_SUCCESS;
@@ -73,6 +84,7 @@ RTErrorT RT_FrostyParseResources(const char** buf, RTArrayT** outResources)
         {
             return RT_ERROR_ALLOCATION_FAILED;
         }
+
         memset(resource, 0, sizeof(RTFrostyResourceT));
 
         // Parse and append the resource
@@ -101,7 +113,12 @@ void RT_FrostyDestroyResource(RTFrostyResourceT* resource)
     free(resource);
 }
 
-int32_t _SwapEndiannessS32(int32_t val)
+static uint32_t _SwapEndiannessU32(uint32_t val)
+{
+    return ((val >> 24) & 0xff) | ((val << 8) & 0xff0000) | ((val >> 8) & 0xff00) | ((val << 24) & 0xff000000);
+}
+
+static int32_t _SwapEndiannessS32(int32_t val)
 {
     int32_t result = 0;
     result |= (val & 0x000000FF) << 24;
@@ -111,7 +128,7 @@ int32_t _SwapEndiannessS32(int32_t val)
     return result;
 }
 
-uint16_t _SwapEndiannessU16(uint16_t val)
+static uint16_t _SwapEndiannessU16(uint16_t val)
 {
     uint16_t result = 0;
     result |= (val & 0x00FF) << 8;
@@ -127,12 +144,11 @@ RTErrorT RT_FrostyDecompressEbx(const char* buf, size_t size, char** outBuf, siz
     while (size > 0)
     {
         // Read chunk meta
-        int32_t bufferSize = RT_READ_BUF(int32_t, &buf);
-        bufferSize = _SwapEndiannessS32(bufferSize);
-
-        // There are some weird huge resources that fail to decompress
-        if (bufferSize >= 1e+9)
+        uint32_t bufferSize = RT_READ_BUF(uint32_t, &buf);
+        bufferSize = _SwapEndiannessU32(bufferSize);
+        if (bufferSize > 0x10000)
         {
+            RT_LogF("Failing to read resource of size %d (%d)", bufferSize, size);
             return RT_ERROR_RESOURCE_TOO_BIG;
         }
 
@@ -155,6 +171,7 @@ RTErrorT RT_FrostyDecompressEbx(const char* buf, size_t size, char** outBuf, siz
         size_t err = ZSTD_decompress(writer + total, bufferSize, buf, compressSize);
         if (ZSTD_isError(err))
         {
+            RT_LogF("Decompression failed: %s", ZSTD_getErrorName(err));
             return RT_ERROR_DECOMPRESSION_FAILED;
         }
 
