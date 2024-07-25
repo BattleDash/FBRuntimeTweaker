@@ -1,3 +1,6 @@
+> [!WARNING]
+> This project has been superseded by [KYBER V2](https://uplink.kyber.gg/news/features-overview/), which has proper support for async loading, chunks, resources, bundles, and mod merging.
+
 # FBRuntimeTweaker
 Runtime mod loading for the Frostbite engine
 
